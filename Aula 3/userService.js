@@ -17,4 +17,4 @@ class userService{
     }
 }
 
-modulo.exports = new userService;
+module.exports = new userService;
