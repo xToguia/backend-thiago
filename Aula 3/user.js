@@ -1,17 +1,15 @@
 class User {
     constructor(id, nome, email, senha, endereco, telefone, cpf) {
-        if (!id || !nome || !email || !senha || !endereco || !telefone || !cpf) {
-            throw new Error("Todos os campos são obrigatórios");
-        }
-
-        this.id = id;
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
+        this.id = id; // id do usuário
+        this.nome = nome; // nome do usuário
+        this.email = email; // e-mail do usuário
+        this.senha = senha; // senha do usuário
         this.endereco = endereco;
-        this.telefone = telefone;
-        this.cpf = cpf;
+        this.telefone = telefone; // telefone do usuário
+        this.cpf = cpf; // cpf do usuário
+        
+        
     }
 }
 
-module.exports = User;
+module.exports = User; // exporta o módulo
