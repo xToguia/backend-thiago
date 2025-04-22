@@ -2,42 +2,9 @@ const User = require("./user");
 const path = require('path'); //modulo para manipular caminhos
 const fs = require('fs'); // modulo para manipular arquivos files system
 const bcrypt = require('bcryptjs');
+const mysql = require("./mysql");
 
 class userService {
-    constructor() {
-        this.filePath = path.join(__dirname, 'user.json');
-        this.users = this.loadUsers(); // Carregar usuários ao iniciar o serviço
-        this.nextId = this.getNextId(); // Inicializar o próximo ID
-    }
-
-    loadUsers() {
-        try {
-            if (fs.existsSync(this.filePath)) { // Verifica se o arquivo existe
-                const data = fs.readFileSync(this.filePath); // Lê o arquivo
-                return JSON.parse(data); // Transforma o JSON em objeto
-            }
-        } catch (erro) { // Caso ocorra um erro
-            console.log("Erro ao carregar arquivo", erro);
-        }
-        return [];
-    }
-
-    getNextId() {
-        try {
-            if (this.users.length === 0) return 1;
-            return Math.max(...this.users.map(user => user.id)) + 1;
-        } catch (erro) { // Caso ocorra um erro
-            console.log("Erro ao carregar arquivo", erro);
-        }
-    }
-
-    saveUsers() {
-        try {
-            fs.writeFileSync(this.filePath, JSON.stringify(this.users));
-        } catch (erro) {
-            console.log("Erro ao salvar arquivo", erro);
-        }
-    }
 
     async addUser(nome, email, senha, endereco, telefone, cpf) {
         try {
@@ -56,19 +23,37 @@ class userService {
         }
     }
 
-    getUsers() {
+    async getUser(id) {
         try {
-            return this.users;
+            const resultado = await mysql.execute(
+            `SELECT idUsuario FROM usuarios WHERE idUsuario = ?`,
+            [id]
+        );
+        console.log("resultado", resultado);
+        return resultado;
         } catch (erro) {
-            console.log("Erro", erro);
+            console.log("Erro ao buscar usuário", erro);
         }
-    }deleteUser(id) {
+
+    }
+    async deleteUser(id) {
         try {
-            this.users = this.users.filter(user => user.id !== id);
-            this.saveUsers();
+            const user = await this.getUser(id);
+            if (user.length == 0) {
+                console.log("Usuário não existe");
+                return;
+            }
+            const resultado = await mysql.execute(
+                `DELETE FROM usuarios WHERE idUsuario = ?`,
+                [id]
+            );
+            return resultado;
         } catch (erro) {
-            console.log("Erro ao deletar o usuario", erro);
+            console.log("Erro ao deletar o usuário", erro);
         }
+    }
+
+    async updateUser(id, nome, email, senha, endereco, telefone, cpf) {
     }
 }
 
